@@ -9,6 +9,8 @@
 import csv
 import matplotlib.pyplot as plt
 
+# this printOrNot variable is needed to stop the retrieveDataFromFile() function from calling print()
+# multiple times every time it's called
 printOrNot = True
 
 def retrieveDataFromFile():
@@ -30,27 +32,36 @@ def retrieveDataFromFile():
         MPAAs = []
         global printOrNot
         for line in data:
-            # if ticket number has commas and can't be cast as an int vs not
+            # this try-except converts the number of tickets from String to int
+            # ex: "1,123,456" -> 1123456 or "123" -> 123
             try:
+                # if ticket number has commas and can't be cast as an int vs not
                 line[5] = int(line[5])
             except:
                 formatTickets = ""
                 iterator = 0
                 while iterator < len(line[5]):
+                    # don't add commas to String because they aren't part of the number
                     if line[5][iterator] != ",":
                         formatTickets += line[5][iterator]
                     iterator += 1                        
                 line[5] = int(formatTickets)
+            # this if-else stores the [total number of movies, and total tickets] as a list in a dictionary
+            # with months(1..12) as keys
             if line[1].split("/")[0] not in totalMoviesAndTicketsInMonths:
                 totalMoviesAndTicketsInMonths[line[1].split("/")[0]] = [0, int(line[5])]
             else:
                 totalMoviesAndTicketsInMonths[line[1].split("/")[0]][0] += 1
                 totalMoviesAndTicketsInMonths[line[1].split("/")[0]][1] += int(line[5])
+            # this if-else stores the total number of tickets each distributor produced in a dictionary
+            # with distrubtors as keys
             if line[2] not in distributorsAndTickets:
                 distributorsAndTickets[line[2]] = int(line[5])
             else:
                 distributorsAndTickets[line[2]] += int(line[5])
-
+            # stores the number of movies produced of a certain genre in a certain month in lists with index numbers
+            # corresponding to months
+            # ex: index 0 is January... index 11 is December. 4 lists representing 4 genres
             for month in range(1, 13):
                 if int(line[1][0]) == month or line[1][0:2] == str(month):
                     if line[3] == "Drama":
@@ -61,8 +72,10 @@ def retrieveDataFromFile():
                         actionMonths[month - 1] += 1
                     elif line[3] == "Comedy":
                         comedyMonths[month - 1] += 1
+            # stores every unique genre in a list
             if line[3] not in genres:
                 genres.append(line[3])
+            # stores every unique MPAA in a list
             if line[4] not in MPAAs:
                 MPAAs.append(line[4])
             numTicketsSold += int(line[5])
@@ -75,6 +88,7 @@ def retrieveDataFromFile():
             print(f"Number of different distributors: {len(distributorsAndTickets)}")
             print(f"Total number of tickets sold: {numTicketsSold}\n")
             print("================================\n")
+        # converting dictionary keys that were months as 1..12 to months as January..December
         totalMoviesAndTicketsInMonths["January"] = totalMoviesAndTicketsInMonths.pop("1")
         totalMoviesAndTicketsInMonths["February"] = totalMoviesAndTicketsInMonths.pop("2")
         totalMoviesAndTicketsInMonths["March"] = totalMoviesAndTicketsInMonths.pop("3")
@@ -91,6 +105,7 @@ def retrieveDataFromFile():
         mostTickets = totalMoviesAndTicketsInMonths["January"][1]
         mostMoviesMonth = ""
         mostTicketsMonth = ""
+        # algorithm to search for most movies in what month and most tickets in what month
         for key, value in totalMoviesAndTicketsInMonths.items():
             if value[0] > mostMovies:
                 mostMovies = value[0]
@@ -103,11 +118,13 @@ def retrieveDataFromFile():
             print(f"Most number of tickets sold ({mostTickets}) in {mostTicketsMonth}")
             print("\n================================\n")
             print("========Tickets sold by distributors========\n")
+        # converts the total number of each distributor tickets into percentages of the total
         for key, value in distributorsAndTickets.items():
             distributorsAndTickets[key] = (distributorsAndTickets[key] / numTicketsSold) * 100
         others = 0
         percentTickets = []
         trueDistributorsAndTickets = {}
+        # searches for percentages of tickets less than 1% and puts it into the "Others" category
         for key, value in distributorsAndTickets.items():
             if value < 1:
                 others += value
@@ -121,6 +138,7 @@ def retrieveDataFromFile():
         percentTicketDistributors = []
         trueDistributorsAndTicketsKeys = list(trueDistributorsAndTickets.keys())
         trueDistributorsAndTicketsValues = list(trueDistributorsAndTickets.values())
+        # figures out where to put "Others" in the list after it is reverse sorted
         for percentage in percentTickets:
             if percentage in trueDistributorsAndTicketsValues:
                 percentTicketDistributors.append(trueDistributorsAndTicketsKeys[trueDistributorsAndTicketsValues.index(percentage)])
