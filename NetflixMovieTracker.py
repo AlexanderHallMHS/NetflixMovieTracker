@@ -212,7 +212,7 @@ def graphData():
     plt.title("Number of movies released in different months of 2016")
     plt.xlabel("Number of movies")
     plt.ylabel("Month")
-    plt.legend(["Drama", "Horror", "Action", "Comedy"])
+    plt.legend(["Drama", "Horror", "Action", "Comedy"], loc = "upper right",prop={'size': 8})
     plt.xticks(fontSize="12", rotation=90)
     plt.show()
 
