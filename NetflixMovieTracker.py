@@ -62,16 +62,27 @@ def retrieveDataFromFile():
             # stores the number of movies produced of a certain genre in a certain month in lists with index numbers
             # corresponding to months
             # ex: index 0 is January... index 11 is December. 4 lists representing 4 genres
-            for month in range(1, 13):
-                if int(line[1][0]) == month or line[1][0:2] == str(month):
-                    if line[3] == "Drama":
-                        dramaMonths[month - 1] += 1
-                    elif line[3] == "Horror":
-                        horrorMonths[month - 1] += 1
-                    elif line[3] == "Action":
-                        actionMonths[month - 1] += 1
-                    elif line[3] == "Comedy":
-                        comedyMonths[month - 1] += 1
+            for month in range(1,13):
+                try:
+                    if int(line[1][0:2]) == month: #and line[1][0:2] != str(month) or line[1][0:2] == str(month):
+                        if line[3] == "Drama":
+                            dramaMonths[month-1] += 1
+                        elif line[3] == "Horror":
+                            horrorMonths[month-1] += 1
+                        elif line[3] == "Action":
+                            actionMonths[month-1] += 1
+                        elif line[3] == "Comedy":
+                            comedyMonths[month-1] += 1
+                except:
+                    if int(line[1][0]) == month:
+                        if line[3] == "Drama":
+                            dramaMonths[month-1] += 1
+                        elif line[3] == "Horror":
+                            horrorMonths[month-1] += 1
+                        elif line[3] == "Action":
+                            actionMonths[month-1] += 1
+                        elif line[3] == "Comedy":
+                            comedyMonths[month-1] += 1
             # stores every unique genre in a list
             if line[3] not in genres:
                 genres.append(line[3])
