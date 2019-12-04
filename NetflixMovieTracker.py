@@ -63,8 +63,10 @@ def retrieveDataFromFile():
             # corresponding to months
             # ex: index 0 is January... index 11 is December. 4 lists representing 4 genres
             for month in range(1,13):
+                # check if first two numbers of MM/DD/YYYY is the same as the month(if parsing this throws and error),
+                # it then it is M/DD/YYYY and is handled in except
                 try:
-                    if int(line[1][0:2]) == month: #and line[1][0:2] != str(month) or line[1][0:2] == str(month):
+                    if int(line[1][0:2]) == month:
                         if line[3] == "Drama":
                             dramaMonths[month-1] += 1
                         elif line[3] == "Horror":
